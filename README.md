@@ -1,2 +1,4 @@
 # neoBDD
-BDD in ScriptShell
+NeoBDSH in ScriptShell
+
+Make BDD in SH
