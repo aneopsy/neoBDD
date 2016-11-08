@@ -9,7 +9,8 @@ class BDDTestCase(unittest.TestCase):
 
     def makeATest(self, params):
         self.output = subprocess.Popen(' '.join([PATH] + params),
-                                       stdout=subprocess.PIPE, shell=True).communicate()[0]
+                                       stdout=subprocess.PIPE,
+                                       shell=True).communicate()[0]
         return self.output
 
     def putTest(self, key, value):
@@ -32,12 +33,15 @@ class BDDTestCase(unittest.TestCase):
 
     def testSelect(self):
         self.selectTest('"*"')
-        self.assertEqual(self.output, 'salut\n')
+        self.assertEqual(self.output, b'salut\n')
 
     def testDel(self):
+        self.flushTest()
+        self.putTest(0, "salut")
+        self.putTest(1, "kikoo")
         self.delTest(1)
         self.selectTest('"*"')
-        self.assertEqual(self.output, '')
+        self.assertEqual(self.output, b'salut\n')
 
     def testx2(self):
         self.flushTest()
@@ -45,10 +49,10 @@ class BDDTestCase(unittest.TestCase):
         for key, value in enumerate(dic):
             self.putTest(key, value)
         self.selectTest('"*"')
-        self.assertEqual(self.output, str('A\nZ\nE\nR\nT\nY\n'))
+        self.assertEqual(self.output, b'A\nZ\nE\nR\nT\nY\n')
         self.delTest(1, 'Z')
         self.selectTest('"*"')
-        self.assertEqual(self.output, str('A\nE\nR\nT\nY\n'))
+        self.assertEqual(self.output, b'A\nE\nR\nT\nY\n')
         self.flushTest()
         self.selectTest('"*"')
         self.assertEqual(self.output, b'')
@@ -67,7 +71,7 @@ class BDDTestCase(unittest.TestCase):
         self.putTest(0, "Hello World")
         self.putTest(1, 0)
         self.selectTest("'$1'")
-        self.assertEqual(self.output, 'Hello World\n')
+        self.assertEqual(self.output, b'Hello World\n')
         self.flushTest()
 
 

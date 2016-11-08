@@ -36,17 +36,20 @@ file_error ()
     exit 1
 }
 
+### MAKE_HEADER ###
 set_output ()
 {
+    ### Check if file is exist ###
     if [ ! -f "$DB_FILE" ]
     then
+        ### Put header in file ###
         echo "$DB_HEADER" > "$DB_FILE"
     fi
 }
 
-
 db_put ()
 {
+    ### Check if $1 and $2 is not empty ###
     if [ -n "$1" ] && [ -n "$2" ]
     then
         KEY="$1"
@@ -92,7 +95,7 @@ db_put ()
         SEARCH_KEY=`grep "^$KEY $SEPARATOR" "$DB_FILE"`
         if [ -n "$SEARCH_KEY" ]  ### if key exists
         then                     ### Replacing key
-            cat "$DB_FILE" | sed "/^$KEY / s/[^ ]*$/$VALUE/g" "$DB_FILE.temp"
+            cat "$DB_FILE" | sed "/^$KEY / s/[^ ]*$/$VALUE/g" "$DB_FILE"
         else                     ### Creating new key
             echo "$KEY $SEPARATOR $VALUE" >> "$DB_FILE"
         fi
