@@ -45,13 +45,13 @@ class BDDTestCase(unittest.TestCase):
         for key, value in enumerate(dic):
             self.putTest(key, value)
         self.selectTest('"*"')
-        self.assertEqual(self.output, 'A\nZ\nE\nR\nT\nY\n')
+        self.assertEqual(self.output, str('A\nZ\nE\nR\nT\nY\n'))
         self.delTest(1, 'Z')
         self.selectTest('"*"')
-        self.assertEqual(self.output, 'A\nE\nR\nT\nY\n')
+        self.assertEqual(self.output, str('A\nE\nR\nT\nY\n'))
         self.flushTest()
         self.selectTest('"*"')
-        self.assertEqual(self.output, '')
+        self.assertEqual(self.output, b'')
 
     def testy3(self):
         self.flushTest()
