@@ -13,6 +13,6 @@ python:
 # install: "pip install -r requirements.txt"
 # command to run tests
 before_script:
-    - chmod +111 bdd.sh
+    - chmod 777 bdd.sh
 script:
     -python test_bdd.py
