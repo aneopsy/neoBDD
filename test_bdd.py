@@ -10,9 +10,10 @@ class BDDTestCase(unittest.TestCase):
     TEST neoBDD
     '''
     def makeATest(self, params):
-        self.output = subprocess.Popen(' '.join([PATH] + params),
+        self.output, self.err = subprocess.Popen(' '.join([PATH] + params),
+                                       stderr=subprocess.PIPE,
                                        stdout=subprocess.PIPE,
-                                       shell=True).communicate()[0]
+                                       shell=True).communicate()
         return self.output
 
     def putTest(self, key, value):
@@ -74,6 +75,16 @@ class BDDTestCase(unittest.TestCase):
         self.putTest(1, 0)
         self.selectTest("'$1'")
         self.assertEqual(self.output, b'Hello World\n')
+        self.flushTest()
+
+    def testzzError(self):
+        self.flushTest()
+        self.makeATest(['put'])
+        self.assertIn(b'Syntax error : put\n', self.err)
+        self.makeATest(['del'])
+        self.assertIn(b'Syntax error : del\n', self.err)
+        self.makeATest(['select'])
+        self.assertIn('', self.err)
         self.flushTest()
 
 if __name__ == '__main__':

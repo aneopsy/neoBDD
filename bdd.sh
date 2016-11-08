@@ -23,7 +23,6 @@ bdsh.sh [-v] [(-f | -c) <db_file>] (put (<key> | $<key>) (<value> | $<key>) |
                                     del (<key> | $<key>) [<value> | $<key>] |
                                     select [<expr> | $<key>]
                                     flush)
-
 EOF
 }
 
@@ -52,6 +51,7 @@ db_put ()
     KEY="$1"
     VALUE="$2"
     set_output
+    ### check if $ is in ###
     if [ `echo "$VALUE" | grep '^\$.*$'` ]
         then
         VALUE=`echo "$VALUE" | sed 's/^\$\([^ ]*\)/\1/g'`
@@ -265,7 +265,7 @@ while [ $# -gt 0 ]; do
             shift 1
             exit 0
         else
-            echo "Syntax error : selct" >&2
+            echo "Syntax error : select" >&2
             usage
             exit $E_NOARGS
         fi
