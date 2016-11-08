@@ -6,7 +6,9 @@ PATH = "./bdd.sh"
 
 
 class BDDTestCase(unittest.TestCase):
-
+    '''
+    TEST neoBDD
+    '''
     def makeATest(self, params):
         self.output = subprocess.Popen(' '.join([PATH] + params),
                                        stdout=subprocess.PIPE,
@@ -73,7 +75,6 @@ class BDDTestCase(unittest.TestCase):
         self.selectTest("'$1'")
         self.assertEqual(self.output, b'Hello World\n')
         self.flushTest()
-
 
 if __name__ == '__main__':
     unittest.main()
