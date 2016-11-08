@@ -2,8 +2,6 @@
 
 ### VARIABLES ####
 
-TRUE=0
-FALSE=1
 E_NOARGS=68
 VERBOSE=1
 DB_FILE="sh.db"
@@ -14,7 +12,7 @@ VALUE=""
 
 
 ###########################
-####       FUNCTIONS   ####
+####    FUNCTIONS      ####
 ###########################
 
 usage ()
@@ -49,56 +47,56 @@ set_output ()
 
 db_put ()
 {
-    ### Check if $1 and $2 is not empty ###
     if [ -n "$1" ] && [ -n "$2" ]
     then
-        KEY="$1"
-        VALUE="$2"
-        set_output
-        if [ `echo "$VALUE" | grep '^\$.*$'` ]
+    KEY="$1"
+    VALUE="$2"
+    set_output
+    if [ `echo "$VALUE" | grep '^\$.*$'` ]
         then
-            VALUE=`echo "$VALUE" | sed 's/^\$\([^ ]*\)/\1/g'`
-            SEARCH_VALUE=`grep "^$VALUE $SEPARATOR" "$DB_FILE"`
-            if [ -z "$SEARCH_VALUE" ]
-            then
-                echo "No such key : \$<$VALUE>" >&2
-                exit 1
-            else
-                VALUE=`echo "$SEARCH_VALUE" | sed 's/.* \([^ ]*\)$/\1/g'`
-            fi
-        fi
-        ### if in form $<key> ###
-        if [ `echo "$KEY" | grep '^\$.*$'` ]
+        VALUE=`echo "$VALUE" | sed 's/^\$\([^ ]*\)/\1/g'`
+        SEARCH_VALUE=`grep "^$VALUE $SEPARATOR" "$DB_FILE"`
+        if [ -z "$SEARCH_VALUE" ]
         then
-            ### parse value of $key ###
-            KEY=`echo "$KEY" | sed 's/^\$\([^ ]*\)/\1/g'`
-            SEARCH_KEY=`grep "^$KEY $SEPARATOR" "$DB_FILE"`
-            if [ -z "$SEARCH_KEY" ]
-            then        ### KEY NOT FOUND ###
-                echo "No such key : \$<$KEY>" >&2
-                exit 1
-            else
-                ### KEY FOUND ###
-                KEY=`echo "$SEARCH_KEY" | sed 's/.* \([^ ]*\)$/\1/g'`
-                SEARCH_KEY=`grep "^$KEY $SEPARATOR" "$DB_FILE"`
-                if [ -z "$SEARCH_KEY" ]
-                then
-                    echo "$KEY $SEPARATOR $VALUE" >> "$DB_FILE"
-                else
-                    cat "$DB_FILE" | sed "/^$KEY $SEPARATOR/ s/[^ ]*$/$VALUE/g" > "$DB_FILE.temp"
-                    cat $DB_FILE.temp > $DB_FILE && rm $DB_FILE.temp
-                fi
-            fi
-            exit 0
+        echo "No such key : \$<$VALUE>" >&2
+        exit 1
+        else
+        VALUE=`echo "$SEARCH_VALUE" | sed 's/.* \([^ ]*\)$/\1/g'`
         fi
-        ### KEY in form <KEY>
+    fi
+    #### if in form $<key> ###
+    if [ `echo "$KEY" | grep '^\$.*$'` ]
+        then
+        ### parse value of $key ###
+        KEY=`echo "$KEY" | sed 's/^\$\([^ ]*\)/\1/g'`
         SEARCH_KEY=`grep "^$KEY $SEPARATOR" "$DB_FILE"`
-        if [ -n "$SEARCH_KEY" ]  ### if key exists
-        then                     ### Replacing key
-            cat "$DB_FILE" | sed "/^$KEY / s/[^ ]*$/$VALUE/g" "$DB_FILE"
-        else                     ### Creating new key
+        if [ -z "$SEARCH_KEY" ]
+        then        ### KEY NOT FOUND ###
+        echo "No such key : \$<$KEY>" >&2
+        exit 1
+        else
+                ### KEY FOUND ###
+        KEY=`echo "$SEARCH_KEY" | sed 's/.* \([^ ]*\)$/\1/g'`
+        SEARCH_KEY=`grep "^$KEY $SEPARATOR" "$DB_FILE"`
+        if [ -z "$SEARCH_KEY" ]
+        then
             echo "$KEY $SEPARATOR $VALUE" >> "$DB_FILE"
+        else
+            cat "$DB_FILE" | sed "/^$KEY $SEPARATOR/ s/[^ ]*$/$VALUE/g" > "$DB_FILE.temp"
+            cat $DB_FILE.temp > $DB_FILE && rm $DB_FILE.temp
         fi
+        fi
+        exit 0
+    fi
+    ### KEY in form <KEY>
+    SEARCH_KEY=`grep "^$KEY $SEPARATOR" "$DB_FILE"`
+    if [ -n "$SEARCH_KEY" ]  ### if key exists
+    then                     ### Replacing key
+        cat "$DB_FILE" | sed "/^$KEY / s/[^ ]*$/$VALUE/g" > "$DB_FILE.temp"
+        cat $DB_FILE.temp > $DB_FILE && rm $DB_FILE.temp
+    else                     ### Creating new key
+        echo "$KEY $SEPARATOR $VALUE" >> "$DB_FILE"
+    fi
     fi
 }
 
@@ -106,7 +104,7 @@ db_del ()
 {
     KEY="$1"
     VALUE="$2"
-    ### if in form $key
+    ### if in form $key ###
     if [ `echo "$KEY" | grep '^\$.*$'` ]
     then
         ### parse value of $key ###
@@ -116,9 +114,9 @@ db_del ()
     fi
     if [ -z "$2" ]
     then
-        ### searching key
+        ### searching key ###
         SEARCH_KEY=`grep "^$KEY $SEPARATOR" "$DB_FILE"`
-        ### KEY FOUND ###
+        ### Check if key found ###
         if [ -n "$SEARCH_KEY" ]
         then
             VALUE=`echo "$SEARCH_KEY" | sed 's/.* \([^ ]*\)$/\1/g'`
@@ -144,14 +142,14 @@ db_del ()
 
 db_select ()
 {
+    ### if $key or $value no set ###
     if [ ! "$1" ]
     then
-        echo "$1"
         cat "$DB_FILE" | sed "s/^.* $SEPARATOR //g"
         exit 0
     else
         KEY="$1"
-        ### $key state
+        ### $key state ###
         if [ `echo "$KEY" | grep '^\$.*$'` ]
         then
             ### parse $key value ###
@@ -159,6 +157,7 @@ db_select ()
             SEARCH_KEY=`grep "^$KEY $SEPARATOR" "$DB_FILE"`
             KEY=`echo "$SEARCH_KEY" | sed 's/.* \([^ ]*\)$/\1/g'`
             SEARCH_KEY=`grep "^$KEY $SEPARATOR" "$DB_FILE"`
+            ### Check if key exist ###
             if [ -z "$SEARCH_KEY" ]
             then
                 echo "No such key : \$<$KEY>" >&2
@@ -204,7 +203,7 @@ dump ()
 
 if [ ! "$1" ]
 then
-    echo "Syntax error : put" >&2
+    usage
     exit $E_NOARGS
 fi
 
@@ -219,10 +218,10 @@ while [ $# -gt 0 ]; do
         then
             if [ ! -f "$DB_FILE" ] && [ "$1" = "-f" ]
             then
-                echo "No base found : $DB_FILE " >&2
+                echo "File not found : $DB_FILE " >&2
                 exit 1
             else
-                shift
+                shift 1
             fi
         else
             usage
@@ -237,11 +236,13 @@ while [ $# -gt 0 ]; do
         if [ $# -ne 3 ]
         then
             echo "Syntax error : put" >&2
-            exit 1
+            usage
+            exit $E_NOARGS
+                #statements
         else
             ### Put cmd ###
             db_put "$2" "$3"
-            shift;shift
+            shift 2
         fi
         ;;
     del)
@@ -249,9 +250,10 @@ while [ $# -gt 0 ]; do
         then
             ### Del cmd ###
             db_del "$2" "$3"
-            shift;shift
+            shift 2
         else
-            echo "Syntax error : put" >&2
+            echo "Syntax error : del" >&2
+            usage
             exit $E_NOARGS
         fi
         ;;
@@ -260,10 +262,11 @@ while [ $# -gt 0 ]; do
         then
             ### Select cmd ###
             db_select "$2"
-            shift
+            shift 1
             exit 0
         else
-            echo "Syntax error : select" >&2
+            echo "Syntax error : selct" >&2
+            usage
             exit $E_NOARGS
         fi
         ;;
@@ -285,7 +288,6 @@ while [ $# -gt 0 ]; do
         usage
         break;;
     esac
-    shift
+    shift 1
 done
-
 #END
