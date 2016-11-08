@@ -9,7 +9,5 @@ python:
  - "3.5-dev" # 3.5 development branch
  - "3.6-dev" # 3.6 development branch
  - "nightly" # currently points to 3.7-dev
-before_script:
-    - chmod ugo+x bdd.sh
-script:
-    - python test_bdd.py
+before_script: chmod ugo+x bdd.sh
+script: python test_bdd.py
