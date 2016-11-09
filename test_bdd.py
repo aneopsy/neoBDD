@@ -80,11 +80,11 @@ class BDDTestCase(unittest.TestCase):
     def testzzError(self):
         self.flushTest()
         self.makeATest(['put'])
-        self.assertIn(b'Syntax error : put\n', self.err)
+        self.assertTrue(b'Syntax error : put\n' in self.err)
         self.makeATest(['del'])
-        self.assertIn(b'Syntax error : del\n', self.err)
+        self.assertTrue(b'Syntax error : del\n' in self.err)
         self.makeATest(['select'])
-        self.assertIn('', self.err)
+        self.assertTrue('' in self.err)
         self.flushTest()
 
 if __name__ == '__main__':
