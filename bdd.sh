@@ -5,7 +5,7 @@
 E_NOARGS=68
 VERBOSE=1
 DB_FILE="sh.db"
-DB_HEADER="neoBDSH V0.1\nLast update:   `date`"
+DB_HEADER="neoBDSH V0.1\nLast update: `date`"
 SEPARATOR=' #:@:# '
 KEY=""
 VALUE=""
@@ -42,6 +42,14 @@ set_output ()
         ### Put header in file ###
         echo "$DB_HEADER" > "$DB_FILE"
     fi
+}
+
+### UPDATE DATE ###
+update_date ()
+{
+    tail -n +3 "$DB_FILE" > "$DB_FILE.temp"
+    sed -i "1i$DB_HEADER" "$DB_FILE.temp"
+    cat $DB_FILE.temp > $DB_FILE && rm $DB_FILE.temp
 }
 
 db_put ()
@@ -145,8 +153,14 @@ db_select ()
     ### if $key or $value no set ###
     if [ ! "$1" ]
     then
-        cat "$DB_FILE" | sed "s/^.* $SEPARATOR //g"
-        exit 0
+        if [ $VERBOSE = "0" ]
+        then
+            cat "$DB_FILE" | sed "s/ $SEPARATOR /=/"
+            exit 0
+        else
+            cat "$DB_FILE" | sed "s/^.* $SEPARATOR //g"
+            exit 0
+        fi
     else
         KEY="$1"
         ### $key state ###
@@ -243,6 +257,8 @@ while [ $# -gt 0 ]; do
             ### Put cmd ###
             db_put "$2" "$3"
             shift 2
+            update_date
+            exit 0
         fi
         ;;
     del)
@@ -251,6 +267,8 @@ while [ $# -gt 0 ]; do
             ### Del cmd ###
             db_del "$2" "$3"
             shift 2
+            update_date
+            exit 0
         else
             echo "Syntax error : del" >&2
             usage
