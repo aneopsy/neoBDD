@@ -84,7 +84,7 @@ class BDDTestCase(unittest.TestCase):
         self.makeATest(['del'])
         self.assertTrue(b'Syntax error : del\n' in self.err)
         self.makeATest(['select'])
-        self.assertTrue('' in self.err)
+        self.assertTrue(b'' in self.err)
         self.flushTest()
 
 if __name__ == '__main__':
