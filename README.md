@@ -6,11 +6,12 @@ BDD manager in SH
 - Python2.X or Python 3.X for test (Optional)
 
 ## Usages
-> bdsh.sh [-v] [(-f | -c) <db_file>] (put (<key> | $<key>) (<value> | $<key>) |
-                                      del (<key> | $<key>) [<value> | $<key>] |
-                                      select [<expr> | $<key>]
-                                      flush)
-
+```
+bdsh.sh [-v] [(-f | -c) <db_file>] (put (<key> | $<key>) (<value> | $<key>) |
+                                    del (<key> | $<key>) [<value> | $<key>] |
+                                    select [<expr> | $<key>]
+                                    flush)
+```
 
 ## Examples
 > ./bdd.sh -f my_bdd.db put 0 "Hello World"
