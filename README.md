@@ -1,5 +1,5 @@
 #NeoBDSH
-> BDD manager in SH
+BDD manager in SH
 
 ### Prerequisities
 - Shell <3
@@ -7,6 +7,7 @@
 
 
 ## Examples
+> ./bdd.sh -f my_bdd.db put 0 "Hello World"
 
 ## Authors
 
@@ -19,4 +20,4 @@ Contributions are always welcome!
 
 ## License
 
-A OpenSource For an Freedom World...
+A OpenSource for a Freedom World...
